@@ -1,14 +1,35 @@
-import { neon } from "@neondatabase/serverless";
+import pg from "pg";
 
-let _sql: ReturnType<typeof neon> | null = null;
+const { Pool } = pg;
 
-export function getSql() {
-  if (!_sql) {
+let _pool: pg.Pool | null = null;
+
+function getPool(): pg.Pool {
+  if (!_pool) {
     const url = process.env["DATABASE_URL"];
     if (!url) throw new Error("DATABASE_URL is not configured");
-    _sql = neon(url);
+    _pool = new Pool({ connectionString: url });
   }
-  return _sql;
+  return _pool;
+}
+
+type SqlResult = Record<string, unknown>[];
+
+export function getSql() {
+  return async function sql(strings: TemplateStringsArray, ...values: unknown[]): Promise<SqlResult> {
+    let query = "";
+    const params: unknown[] = [];
+    strings.forEach((str, i) => {
+      query += str;
+      if (i < values.length) {
+        params.push(values[i]);
+        query += `$${params.length}`;
+      }
+    });
+    const pool = getPool();
+    const result = await pool.query(query, params);
+    return result.rows;
+  };
 }
 
 export async function initSchema(): Promise<void> {

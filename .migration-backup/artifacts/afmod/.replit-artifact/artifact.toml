@@ -1,6 +1,6 @@
 kind = "web"
 previewPath = "/"
-title = "Ministry of Logistics — AFMOD"
+title = "ArabFirstWeb"
 version = "1.0.0"
 id = "artifacts/afmod"
 router = "path"
@@ -12,7 +12,7 @@ version = "1.0.0"
 [[services]]
 name = "web"
 paths = [ "/" ]
-localPort = 3000
+localPort = 20751
 
 [services.development]
 run = "pnpm --filter @workspace/afmod run dev"
@@ -27,5 +27,5 @@ from = "/*"
 to = "/index.html"
 
 [services.env]
-PORT = "3000"
+PORT = "20751"
 BASE_PATH = "/"

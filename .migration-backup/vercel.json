@@ -1,26 +1,23 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "buildCommand": "cd artifacts/afmod && pnpm run build",
-  "installCommand": "pnpm install && (cd artifacts/api-server && pnpm run build)",
+  "buildCommand": "pnpm --filter @workspace/afmod run build",
+  "installCommand": "pnpm install",
   "outputDirectory": "artifacts/afmod/dist/public",
-  "rewrites": [
-    { "source": "/api/:path*", "destination": "/api/index.js" }
-  ],
-  "functions": {
-    "api/index.js": {
-      "maxDuration": 30,
-      "memory": 512
-    }
-  },
+  "cleanUrls": true,
+  "trailingSlash": false,
   "headers": [
     {
-      "source": "/(.*)\\.(png|jpg|jpeg|webp|svg|ico|gif)$",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=604800, immutable" }]
+      "source": "/(.*)\\.(png|jpg|jpeg|webp|svg|ico)$",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=604800, immutable" }
+      ]
     },
     {
-      "source": "/assets/(.*)",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=604800, immutable" }]
+      "source": "/(.*)\\.(css|js)$",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=3600, must-revalidate" }
+      ]
     }
   ]
 }
