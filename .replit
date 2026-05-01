@@ -1,0 +1,61 @@
+modules = ["nodejs-20", "web", "bash", "python-3.11"]
+
+[deployment]
+router = "application"
+deploymentTarget = "autoscale"
+run = ["gunicorn", "--bind", "0.0.0.0:5000", "main:app"]
+
+[deployment.postBuild]
+args = ["pnpm", "store", "prune"]
+env = { "CI" = "true" }
+
+[workflows]
+
+[agent]
+stack = "FLASK_VANILLA_JS"
+expertMode = true
+
+[postMerge]
+path = "scripts/post-merge.sh"
+timeoutMs = 20000
+
+[[ports]]
+localPort = 3000
+externalPort = 3000
+
+[[ports]]
+localPort = 3001
+externalPort = 3001
+
+[[ports]]
+localPort = 8080
+externalPort = 8080
+
+[[ports]]
+localPort = 8081
+externalPort = 80
+
+[[ports]]
+localPort = 8787
+externalPort = 3003
+
+[[ports]]
+localPort = 19161
+externalPort = 3001
+
+[[ports]]
+localPort = 20751
+externalPort = 3000
+
+[userenv]
+
+[userenv.shared]
+DISCORD_GUILD_ID = "1183042468854382612"
+AFMOD_BOT_URL = "http://localhost:8787"
+PORT = "3000"
+BASE_PATH = "/"
+ERLC_WEBHOOK_PORT = "8787"
+
+[nix]
+channel = "stable-25_05"
+packages = ["openssl", "postgresql"]
